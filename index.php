@@ -1,29 +1,44 @@
 <?php
-    require("./app/database/connect.php");  //DBと接続
+    require("./app/database/connect.php");  //DBと接続]
+
+    $error_message = array();
     
     //送信ボタンが押されているとき、ユーザー名とコメント内容を送信
     if(isset($_POST["submitButton"])){
 
-      $post_date = date("Y-m-d H:i:s");
+      //バリデーションチェック
+      //usernameが空の場合、
+      if(empty($_POST["username"])) {
+        $error_message["username"]= "ユーザー名を入力してください";
+      } 
+      //コメントが空の場合、
+      if(empty($_POST["body"])) {
+        $error_message["body"]= "コメントを入力してください";
+      }
 
-     $sql = "INSERT INTO `comment` (`username`, `body`, `post_date`) VALUES (:username, :body, :post_date);";
-     $stmt = $pdo->prepare($sql);
+      if(empty($error_message)) {
+        $post_date = date("Y-m-d H:i:s");
 
-     //値をセット
-     $stmt->bindParam(":username", $_POST["username"], PDO::PARAM_STR);
-     $stmt->bindParam(":body", $_POST["body"], PDO::PARAM_STR);
-     $stmt->bindParam(":post_date", $post_date, PDO::PARAM_STR);
-
-     $stmt->execute();
+        $sql = "INSERT INTO `comment` (`username`, `body`, `post_date`) VALUES (:username, :body, :post_date);";
+        $stmt = $pdo->prepare($sql);
+   
+        //値をセット
+        $stmt->bindParam(":username", $_POST["username"], PDO::PARAM_STR);
+        $stmt->bindParam(":body", $_POST["body"], PDO::PARAM_STR);
+        $stmt->bindParam(":post_date", $post_date, PDO::PARAM_STR);
+   
+        $stmt->execute();
+       }
+       
+       //コメントdataをDBから取得
+       $comment_array = array();
+       $sql = "SELECT * FROM comment";
+       $stmt = $pdo->prepare($sql);
+       $stmt->execute();
+       $comment_array = $stmt;
+       // var_dump($comment_array);
     }
-    
-    //コメントdataをDBから取得
-    $comment_array = array();
-    $sql = "SELECT * FROM comment";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $comment_array = $stmt;
-    // var_dump($comment_array);
+
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +61,16 @@
     <hr>
   </header>
 
+  <!-- バリデーションチェックのエラー文吐き出し -->
+  <?php if(isset($error_message)) : ?>
+    <ul class="errorMessage">
+      <?php foreach($error_message as $error):?>
+        <li><?php echo $error; ?></li>
+        <?php endforeach; ?>
+    </ul>
+    <?php endif; ?>
   <!-- スレッドのタイトルを表示   -->
+
   <div class="threadWrapper">
     <div class="childWrapper">
       <div class="threadTitle">
@@ -67,9 +91,13 @@
         </article>
         <?php endforeach ?>
       </section>
-      <form class="formWrapper" method="POST">
+
+      <!-- main.jsを読み込む -->
+      <!-- <script src="main.js"></script> -->
+
+      <form class="formWrapper" method="POST" name="formData1">
         <div>
-          <input type="submit" value="書き込み" name="submitButton">
+          <input type="submit" value="書き込み" name="submitButton" onClick="return check();">
           <label>名前：</label>
           <input type="text" name="username">
         </div>
@@ -83,4 +111,6 @@
   <!-- 名前、日時、コメントをデータベースから取得 -->
   
 </body>
+
+<header href="index.php">
 </html>
