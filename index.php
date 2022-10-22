@@ -25,6 +25,8 @@
  <!-- threadを読み込む -->
  <?php include("./app/parts/thread.php"); ?>
 
+ <?php include("./app/parts/newThread.php"); ?>
+
   <!-- 名前、日時、コメントをデータベースから取得 -->
   
 </body>

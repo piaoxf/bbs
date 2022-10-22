@@ -1,14 +1,14 @@
  <!-- スレッドのタイトルを表示   -->
  <?php
     include("./app/function/comment_add.php");
-    include("./app/function/comment_get.php");
+    include("./app/function/thread_get.php");
 ?>
- 
+ <?php foreach($thread_array as $thread) : ?>
  <div class="threadWrapper">
     <div class="childWrapper">
       <div class="threadTitle">
         <span>[タイトル]</span> 
-        <h1>掲示板BBS</h1>
+        <h1><?php echo $thread["title"];?></h1>
       </div>
       <?php include("commentSection.php"); ?>
       <?php include("commentForm.php"); ?>
@@ -16,3 +16,4 @@
       <!-- <script src="main.js"></script> -->
     </div>
 </div>
+<?php endforeach; ?>
