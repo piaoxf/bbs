@@ -1,5 +1,7 @@
 <?php
     $error_message = array();
+
+    session_start();
     
     //送信ボタンが押されているとき、ユーザー名とコメント内容を送信
     if(isset($_POST["submitButton"])){
@@ -10,6 +12,7 @@
         $error_message["username"]= "ユーザー名を入力してください";
       } else {
         $escape["username"] = htmlspecialchars($_POST["username"], ENT_QUOTES,"UTF-8");
+        $_SESSION["username"] = $escape["username"];
       }
       //コメントが空の場合、
       if(empty($_POST["body"])) {
